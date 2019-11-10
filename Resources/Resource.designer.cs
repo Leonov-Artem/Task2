@@ -481,9 +481,6 @@ namespace ServicesDemo3
 			// aapt resource value: 0x7f080000
 			public const int status_bar_notification_info_overflow = 2131230720;
 			
-			// aapt resource value: 0x7f080006
-			public const int stop_service = 2131230726;
-			
 			// aapt resource value: 0x7f080001
 			public const int stop_timestamp_service_button_text = 2131230721;
 			

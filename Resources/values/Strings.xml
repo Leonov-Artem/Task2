@@ -5,5 +5,4 @@
 	<string name="app_name">Task2</string>
 	<string name="service_started">The service is started.</string>
 	<string name="notification_text">The started service is running.</string>
-	<string name="stop_service">Stop Service</string>
 </resources>
