@@ -334,13 +334,13 @@ namespace ServicesDemo3
 			public const int right_side = 2131427351;
 			
 			// aapt resource value: 0x7f0b000b
-			public const int start_timestamp_service_button = 2131427339;
+			public const int start_service_button = 2131427339;
 			
 			// aapt resource value: 0x7f0b0012
 			public const int status_bar_latest_event_content = 2131427346;
 			
 			// aapt resource value: 0x7f0b000c
-			public const int stop_timestamp_service_button = 2131427340;
+			public const int stop_service_button = 2131427340;
 			
 			// aapt resource value: 0x7f0b0002
 			public const int tag_transition_group = 2131427330;
@@ -472,9 +472,6 @@ namespace ServicesDemo3
 			// aapt resource value: 0x7f080005
 			public const int notification_text = 2131230725;
 			
-			// aapt resource value: 0x7f080006
-			public const int restart_timer = 2131230726;
-			
 			// aapt resource value: 0x7f080002
 			public const int restart_timestamp_service_button_text = 2131230722;
 			
@@ -484,8 +481,8 @@ namespace ServicesDemo3
 			// aapt resource value: 0x7f080000
 			public const int status_bar_notification_info_overflow = 2131230720;
 			
-			// aapt resource value: 0x7f080007
-			public const int stop_service = 2131230727;
+			// aapt resource value: 0x7f080006
+			public const int stop_service = 2131230726;
 			
 			// aapt resource value: 0x7f080001
 			public const int stop_timestamp_service_button_text = 2131230721;

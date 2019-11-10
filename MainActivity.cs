@@ -36,8 +36,8 @@ namespace ServicesDemo3
 			stopServiceIntent = new Intent(this, typeof(ForegroundService));
 			stopServiceIntent.SetAction(Constants.ACTION_STOP_SERVICE);
 
-			stopServiceButton = FindViewById<Button>(Resource.Id.stop_timestamp_service_button);
-			startServiceButton = FindViewById<Button>(Resource.Id.start_timestamp_service_button);
+			stopServiceButton = FindViewById<Button>(Resource.Id.stop_service_button);
+			startServiceButton = FindViewById<Button>(Resource.Id.start_service_button);
 			if (isStarted)
 			{
 				stopServiceButton.Click += StopServiceButton_Click;

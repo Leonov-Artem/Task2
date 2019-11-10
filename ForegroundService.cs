@@ -78,7 +78,6 @@ namespace ServicesDemo3
 				.SetSmallIcon(Resource.Drawable.ic_stat_name)
 				.SetContentIntent(BuildIntentToShowMainActivity())
 				.SetOngoing(true)
-				.AddAction(BuildRestartTimerAction())
 				.AddAction(BuildStopServiceAction())
 				.Build();
 
@@ -100,23 +99,6 @@ namespace ServicesDemo3
 
 			var pendingIntent = PendingIntent.GetActivity(this, 0, notificationIntent, PendingIntentFlags.UpdateCurrent);
 			return pendingIntent;
-		}
-
-        /// <summary>
-        /// Создает действие Notification.Action, которое даст указание службе перезапустить таймер.
-        /// </summary>
-        /// <returns>Выполняет перезапуск таймера.</returns>
-        Notification.Action BuildRestartTimerAction()
-		{
-			var restartTimerIntent = new Intent(this, GetType());
-			restartTimerIntent.SetAction(Constants.ACTION_RESTART_TIMER);
-			var restartTimerPendingIntent = PendingIntent.GetService(this, 0, restartTimerIntent, 0);
-
-			var builder = new Notification.Action.Builder(Resource.Drawable.ic_action_restart_timer,
-											  GetText(Resource.String.restart_timer),
-											  restartTimerPendingIntent);
-
-			return builder.Build();
 		}
 
         /// <summary>
