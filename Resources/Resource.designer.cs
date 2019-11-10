@@ -466,17 +466,14 @@ namespace ServicesDemo3
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f080005
-			public const int app_description = 2131230725;
-			
 			// aapt resource value: 0x7f080003
 			public const int app_name = 2131230723;
 			
-			// aapt resource value: 0x7f080006
-			public const int notification_text = 2131230726;
+			// aapt resource value: 0x7f080005
+			public const int notification_text = 2131230725;
 			
-			// aapt resource value: 0x7f080007
-			public const int restart_timer = 2131230727;
+			// aapt resource value: 0x7f080006
+			public const int restart_timer = 2131230726;
 			
 			// aapt resource value: 0x7f080002
 			public const int restart_timestamp_service_button_text = 2131230722;
@@ -487,8 +484,8 @@ namespace ServicesDemo3
 			// aapt resource value: 0x7f080000
 			public const int status_bar_notification_info_overflow = 2131230720;
 			
-			// aapt resource value: 0x7f080008
-			public const int stop_service = 2131230728;
+			// aapt resource value: 0x7f080007
+			public const int stop_service = 2131230727;
 			
 			// aapt resource value: 0x7f080001
 			public const int stop_timestamp_service_button_text = 2131230721;
