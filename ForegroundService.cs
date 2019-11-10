@@ -7,48 +7,18 @@ using System.Threading;
 
 namespace ServicesDemo3
 {
-
-	/// <summary>
-	/// This is a sample started service. When the service is started, it will log a string that details how long 
-	/// the service has been running (using Android.Util.Log). This service displays a notification in the notification
-	/// tray while the service is active.
-	/// </summary>
 	[Service]
 	public class ForegroundService : Service
 	{
 		static readonly string TAG = typeof(ForegroundService).FullName;
 
-		UtcTimestamper timestamper;
 		bool isStarted;
-		Handler handler;
-		Action runnable;
 
 		public override void OnCreate()
 		{
 			base.OnCreate();
 			Log.Info(TAG, "OnCreate: the service is initializing.");
-
-			timestamper = new UtcTimestamper();
-			handler = new Handler();
-
-			// Только ради демонстрации работы
-			runnable = new Action(() =>
-							{
-								if (timestamper == null)
-								{
-									Log.Wtf(TAG, "Why isn't there a Timestamper initialized?");
-								}
-								else
-								{
-									string msg = timestamper.GetFormattedTimestamp();
-									Log.Debug(TAG, msg);
-									Intent i = new Intent(Constants.NOTIFICATION_BROADCAST_ACTION);
-									i.PutExtra(Constants.BROADCAST_MESSAGE_KEY, msg);
-									Android.Support.V4.Content.LocalBroadcastManager.GetInstance(this).SendBroadcast(i);
-									handler.PostDelayed(runnable, Constants.DELAY_BETWEEN_LOG_MESSAGES);
-								}
-							});
-		}
+        }
 
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
 		{
@@ -62,14 +32,12 @@ namespace ServicesDemo3
 				{
 					Log.Info(TAG, "OnStartCommand: The service is starting.");
 					RegisterForegroundService();
-					handler.PostDelayed(runnable, Constants.DELAY_BETWEEN_LOG_MESSAGES);
 					isStarted = true;
 				}
 			}
 			else if (intent.Action.Equals(Constants.ACTION_STOP_SERVICE))
 			{
 				Log.Info(TAG, "OnStartCommand: The service is stopping.");
-				timestamper = null;
 				StopForeground(true);
 				StopSelf();
 				isStarted = false;
@@ -77,11 +45,10 @@ namespace ServicesDemo3
 			else if (intent.Action.Equals(Constants.ACTION_RESTART_TIMER))
 			{
 				Log.Info(TAG, "OnStartCommand: Restarting the timer.");
-				timestamper.Restart();
 			}
 
-			// This tells Android not to restart the service if it is killed to reclaim resources.
-			return StartCommandResult.Sticky;
+            // Это говорит Android не перезапускать службу, если она уничтожена для восстановления ресурсов.
+            return StartCommandResult.Sticky;
 		}
 
 		public override IBinder OnBind(Intent intent)
@@ -93,30 +60,14 @@ namespace ServicesDemo3
 
 		public override void OnDestroy()
 		{
-			// We need to shut things down.
-			Log.Debug(TAG, GetFormattedTimestamp() ?? "The TimeStamper has been disposed.");
 			Log.Info(TAG, "OnDestroy: The started service is shutting down.");
 
-			// Stop the handler.
-			handler.RemoveCallbacks(runnable);
-
-			// Remove the notification from the status bar.
+			// Удаляем notification из строки состояния.
 			var notificationManager = (NotificationManager)GetSystemService(NotificationService);
 			notificationManager.Cancel(Constants.SERVICE_RUNNING_NOTIFICATION_ID);
 
-			timestamper = null;
 			isStarted = false;
 			base.OnDestroy();
-		}
-
-        /// <summary>
-        /// Этот метод возвращает отформатированную метку времени (timestamp) клиенту.
-        /// </summary>
-        /// <returns>Строка, в которой указывается время запуска службы и продолжительность ее работы.</returns>
-        string GetFormattedTimestamp()
-		{
-			
-			return timestamper?.GetFormattedTimestamp();
 		}
 
 		void RegisterForegroundService()
@@ -139,7 +90,7 @@ namespace ServicesDemo3
         /// <summary>
         /// Создает PendingIntent, который будет вызывать MainActivity.
         /// </summary>
-        /// <returns>The content intent.</returns>
+        /// <returns>Содержит intent.</returns>
         PendingIntent BuildIntentToShowMainActivity()
 		{
 			var notificationIntent = new Intent(this, typeof(MainActivity));
