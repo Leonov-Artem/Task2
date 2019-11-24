@@ -1,5 +1,5 @@
 ﻿using System;
-namespace ServicesDemo3
+namespace Task2
 {
 	public static class Constants
 	{

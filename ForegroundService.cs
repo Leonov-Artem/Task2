@@ -4,15 +4,17 @@ using Android.Util;
 using Android.Content;
 using Android.OS;
 using System.Threading;
+using Java.Util.Concurrent;
+using Java.Lang;
 
-namespace ServicesDemo3
+namespace Task2
 {
 	[Service]
 	public class ForegroundService : Service
 	{
-		static readonly string TAG = typeof(ForegroundService).FullName;
+		static readonly string TAG = "ForegroundService";
 
-		bool isStarted;
+		public bool IsStarted { get; private set; }
 
 		public override void OnCreate()
 		{
@@ -25,16 +27,16 @@ namespace ServicesDemo3
 			if (intent.Action.Equals(Constants.ACTION_START_SERVICE))
 			{
                 // если сервис уже запущен
-				if (isStarted)
-				{
+				if (IsStarted)
 					Log.Info(TAG, "OnStartCommand: The service is already running.");
-				}
 				else 
 				{
 					Log.Info(TAG, "OnStartCommand: The service is starting.");
 					RegisterForegroundService();
-					isStarted = true;
-				}
+					IsStarted = true;
+
+                    new System.Threading.Thread(() => SomeTask()).Start();
+                }
 			}
 			else if (intent.Action.Equals(Constants.ACTION_STOP_SERVICE))
 			{
@@ -43,7 +45,7 @@ namespace ServicesDemo3
 
                 // останавливаем сервис, если он был до этого запущен
 				StopSelf(); 
-				isStarted = false;
+				IsStarted = false;
 			}
 
             // Говорим Android не перезапускать службу, если она уничтожена ради восстановления ресурсов
@@ -59,40 +61,40 @@ namespace ServicesDemo3
 		{
 			Log.Info(TAG, "OnDestroy: The started service is shutting down.");
 
-			// Удаляем notification из строки состояния.
-			var notificationManager = (NotificationManager)GetSystemService(NotificationService);
-			notificationManager.Cancel(Constants.SERVICE_RUNNING_NOTIFICATION_ID);
+            // Удаляем notification из строки состояния.
+            var notificationManager = (NotificationManager)GetSystemService(Context.NotificationService);
+            notificationManager.Cancel(Constants.SERVICE_RUNNING_NOTIFICATION_ID);
 
-			isStarted = false;
+            IsStarted = false;
 			base.OnDestroy();
 		}
 
-		private void RegisterForegroundService()
-		{
-			var notification = new Notification.Builder(this)
-				.SetContentTitle(Resources.GetString(Resource.String.app_name))
-				.SetContentText(Resources.GetString(Resource.String.notification_text))
-				.SetSmallIcon(Resource.Drawable.ic_stat_name)
-				.SetContentIntent(BuildIntentToShowMainActivity())
-				.SetOngoing(true)
-				.Build();
+        private void RegisterForegroundService()
+        {
+            var notification = new Notification.Builder(this)
+                    .SetContentTitle(Resources.GetString(Resource.String.app_name))
+                    .SetContentText(Resources.GetString(Resource.String.notification_text))
+                    .SetSmallIcon(Resource.Drawable.ic_stat_name)
+                    .SetOngoing(true)
+                    .Build();
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                CreateNotificationChannel();
 
 			StartForeground(Constants.SERVICE_RUNNING_NOTIFICATION_ID, notification);
 		}
 
-        /// <summary>
-        /// Создает PendingIntent, который будет вызывать MainActivity.
-        /// При клике по уведомлению вернемся в MainActivity.
-        /// </summary>
-        PendingIntent BuildIntentToShowMainActivity()
-		{
-			var notificationIntent = new Intent(this, typeof(MainActivity));
-			notificationIntent.SetAction(Constants.ACTION_MAIN_ACTIVITY);
-			notificationIntent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.ClearTask);
-			notificationIntent.PutExtra(Constants.SERVICE_STARTED_KEY, true);
+        private void CreateNotificationChannel()
+        {
+            var notificationChannel = new NotificationChannel("ID", "ChanelName", NotificationImportance.Default);
+            notificationChannel.LockscreenVisibility = NotificationVisibility.Secret;
+            var notificationManager = (NotificationManager)GetSystemService(NotificationService);
+            notificationManager.CreateNotificationChannel(notificationChannel);
+        }
 
-			var pendingIntent = PendingIntent.GetActivity(this, 0, notificationIntent, PendingIntentFlags.UpdateCurrent);
-			return pendingIntent;
-		}
+        private void SomeTask()
+        {
+            
+        }
     }
 }
