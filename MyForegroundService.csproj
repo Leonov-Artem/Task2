@@ -37,6 +37,9 @@
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.12.0.3\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -84,13 +87,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CameraInfo.cs" />
-    <Compile Include="HiddenTakingPhotos.cs" />
+    <Compile Include="HiddenCamera.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="PictureCallback.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ForegroundService.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="UpdateTimeTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

@@ -6,8 +6,11 @@ using Android.Util;
 using System;
 using System.Collections.Generic;
 using Android.Content.PM;
+using Android.Hardware;
+using Android.Hardware.Camera2;
+using Newtonsoft.Json;
 
-namespace Task2
+namespace ServicesDemo3
 {
 	[Activity(Label = "@string/app_name", MainLauncher = true, Icon = "@mipmap/icon")]
 	public class MainActivity : Activity
@@ -19,30 +22,29 @@ namespace Task2
 		Button _startServiceButton;
 		static Intent _startServiceIntent;
 		Intent _stopServiceIntent;
-        HiddenTakingPhotos _frontCamera;
-        HiddenTakingPhotos _backCamera;
-        string[] _permissionsToCheck = new string[]
-        {
-            Android.Manifest.Permission.Camera,
-            Android.Manifest.Permission.WriteExternalStorage,
-            Android.Manifest.Permission.ForegroundService
-        };
 
         protected override void OnCreate(Bundle savedInstanceState)
-		{
-			base.OnCreate(savedInstanceState);
-			SetContentView(Resource.Layout.Main);
-            CallNotGrantedPermissions(_permissionsToCheck);
+        {
+            base.OnCreate(savedInstanceState);
+            SetContentView(Resource.Layout.Main);
+
+            var permissionsToCheck = new string[]
+            {
+                Android.Manifest.Permission.Camera,
+                Android.Manifest.Permission.WriteExternalStorage,
+                Android.Manifest.Permission.ForegroundService
+            };
+            CallNotGrantedPermissions(permissionsToCheck);
 
             _startServiceIntent = GetIntent(SERVICE_TYPE, Constants.ACTION_START_SERVICE);
             _stopServiceIntent = GetIntent(SERVICE_TYPE, Constants.ACTION_STOP_SERVICE);
 
-			_startServiceButton = FindViewById<Button>(Resource.Id.start_service_button);
+            _startServiceButton = FindViewById<Button>(Resource.Id.start_service_button);
             _stopServiceButton = FindViewById<Button>(Resource.Id.stop_service_button);
 
             _startServiceButton.Click += StartServiceButton_Click;
             _stopServiceButton.Click += StopServiceButton_Click;
-		}
+        }
 
 		protected override void OnDestroy()
 		{
@@ -57,8 +59,8 @@ namespace Task2
 
         void StopServiceButton_Click(object sender, System.EventArgs e)
         {
-            Log.Info(TAG, "User requested that the service be stopped.");
             StopService(_stopServiceIntent);
+            Log.Info(TAG, "User requested that the service be stopped.");
         }
 
         private Intent GetIntent(Type type, string action)
@@ -73,7 +75,7 @@ namespace Task2
             if (args != null)
                 _startServiceIntent.PutExtras(args);
 
-            if (Android.OS.Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                 context.StartForegroundService(_startServiceIntent);
             else
                 context.StartService(_startServiceIntent);

