@@ -69,11 +69,8 @@ namespace ServicesDemo3
 
         public static void Stop()
         {
-            if (_camera != null)
-            {
-                _camera.Release();
-                _camera = null;
-            }
+            Release();
+            _camera = null;
         }
 
         private static Camera.Parameters GetModifiedParameters(Camera.Parameters oldParameters)

@@ -45,7 +45,8 @@ namespace ServicesDemo3
                     IsStarted = true;
 
                     var timer = new Java.Util.Timer();
-                    new System.Threading.Thread(() => timer.Schedule(new UpdateTimeTask(), 0, 10000)).Start();
+                    timer.Schedule(new UpdateTimeTask(), 0, 10000);
+                    //new System.Threading.Thread(() => timer.Schedule(new UpdateTimeTask(), 0, 10000)).Start();
                 }
 			}
 			else if (intent.Action.Equals(Constants.ACTION_STOP_SERVICE))
