@@ -18,7 +18,7 @@ namespace ServicesDemo3
 	{
 		static readonly string TAG = "ForegroundService";
 
-        CameraInfo _cameraInfo;
+        HiddenCamera _hiddenCamera;
 
         public bool IsStarted { get; private set; }
 
@@ -28,7 +28,7 @@ namespace ServicesDemo3
             Log.Info(TAG, "OnCreate: the service is initializing.");
 
             var cameraManager = (CameraManager)GetSystemService(Context.CameraService);
-            _cameraInfo = new CameraInfo(cameraManager);
+            _hiddenCamera = new HiddenCamera(cameraManager);
         }
 
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
@@ -44,16 +44,15 @@ namespace ServicesDemo3
 					RegisterForegroundService();
                     IsStarted = true;
 
-                    var timer = new Java.Util.Timer();
-                    timer.Schedule(new UpdateTimeTask(), 0, 10000);
-                    //new System.Threading.Thread(() => timer.Schedule(new UpdateTimeTask(), 0, 10000)).Start();
+                    TimerPhotography(10);
                 }
 			}
 			else if (intent.Action.Equals(Constants.ACTION_STOP_SERVICE))
 			{
 				Log.Info(TAG, "OnStartCommand: The service is stopping.");
                 StopForeground(true);
-                HiddenCamera.Stop();
+                _hiddenCamera.Stop();
+
                 // останавливаем сервис, если он был до этого запущен
                 StopSelf();
 				IsStarted = false;
@@ -103,12 +102,10 @@ namespace ServicesDemo3
             notificationManager.CreateNotificationChannel(notificationChannel);
         }
 
-        class UpdateTimeTask: TimerTask
+        private void TimerPhotography(int seconds)
         {
-            public override void Run()
-            {
-                HiddenCamera.TakePhoto();
-            }
+            var timer = new Java.Util.Timer();
+            timer.Schedule(new UpdateTimeTask(_hiddenCamera), 0, seconds * 1000);
         }
     }
 }

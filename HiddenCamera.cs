@@ -13,17 +13,33 @@ namespace ServicesDemo3
 {
     public class HiddenCamera
     {
-        static Camera _camera;
-        static int CURRENT_CAMERA_ID = 1;
+        readonly int NUMBER_OF_CAMERAS;
+        readonly int CAMERA_FACING_BACK;
+        readonly int CAMERA_FACING_FRONT;
 
-        public static void TakePhoto()
+        Camera _camera;
+        CameraInfo _cameraInfo;
+        CameraFacing _currentCameraFacing;
+
+        public HiddenCamera(CameraManager cameraManager)
+        {
+            _cameraInfo = new CameraInfo(cameraManager);
+            NUMBER_OF_CAMERAS = _cameraInfo.NumberOfCameras();
+            CAMERA_FACING_BACK = _cameraInfo.GetID(CameraFacing.Back);
+            _currentCameraFacing = CameraFacing.Back;
+
+            if (NUMBER_OF_CAMERAS == 2)
+                CAMERA_FACING_FRONT = _cameraInfo.GetID(CameraFacing.Front);
+        }
+
+        public void TakePhoto()
         {
             Release();
             SwitchCamera();
             SetParametersAndTakePhoto();
         }
 
-        private static void Release()
+        private void Release()
         {
             if (_camera != null)
             {
@@ -32,22 +48,27 @@ namespace ServicesDemo3
             }
         }
 
-        private static void SwitchCamera()
+        private void SwitchCamera()
         {
-            switch (CURRENT_CAMERA_ID)
+            if (NUMBER_OF_CAMERAS == 2)
             {
-                case 0:
-                    _camera = Camera.Open((int)Camera.CameraInfo.CameraFacingFront);
-                    CURRENT_CAMERA_ID = 1;
-                    break;
-                case 1:
-                    _camera = Camera.Open((int)Camera.CameraInfo.CameraFacingBack);
-                    CURRENT_CAMERA_ID = 0;
-                    break;
+                switch (_currentCameraFacing)
+                {
+                    case CameraFacing.Back:
+                        _camera = Camera.Open(CAMERA_FACING_FRONT);
+                        _currentCameraFacing = CameraFacing.Front;
+                        break;
+                    case CameraFacing.Front:
+                        _camera = Camera.Open(CAMERA_FACING_BACK);
+                        _currentCameraFacing = CameraFacing.Back;
+                        break;
+                }
             }
+            else
+                _camera = Camera.Open(CAMERA_FACING_BACK);
         }
 
-        private static void SetParametersAndTakePhoto()
+        private  void SetParametersAndTakePhoto()
         {
             try
             {
@@ -67,13 +88,13 @@ namespace ServicesDemo3
             }
         }
 
-        public static void Stop()
+        public void Stop()
         {
             Release();
             _camera = null;
         }
 
-        private static Camera.Parameters GetModifiedParameters(Camera.Parameters oldParameters)
+        private Camera.Parameters GetModifiedParameters(Camera.Parameters oldParameters)
         {
             Camera.Parameters newParameters = oldParameters;
             Camera.Size size = FindMaxSize(newParameters.SupportedPictureSizes);
@@ -95,7 +116,7 @@ namespace ServicesDemo3
             return newParameters;
         }
 
-        private static Camera.Size FindMaxSize(IList<Camera.Size> sizes)
+        private Camera.Size FindMaxSize(IList<Camera.Size> sizes)
         {
             Camera.Size[] orderByDescending = sizes
                                     .OrderByDescending(x => x.Width)

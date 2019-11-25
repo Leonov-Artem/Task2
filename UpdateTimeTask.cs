@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using Java.Util;
+﻿using Java.Util;
 
 namespace ServicesDemo3
 {
-    
+    class UpdateTimeTask : TimerTask
+    {
+        HiddenCamera _hiddenCamera;
+
+        public UpdateTimeTask(HiddenCamera hiddenCamera)
+            => _hiddenCamera = hiddenCamera;
+
+        public override void Run()
+            => _hiddenCamera.TakePhoto();
+    }
 }
