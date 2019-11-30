@@ -2,6 +2,7 @@
 using System.Linq;
 using Java.Lang;
 using Android.Graphics;
+using Android.Hardware;
 using static Android.Hardware.Camera;
 
 namespace ServicesDemo3
@@ -10,7 +11,6 @@ namespace ServicesDemo3
     {
         partial void ModifyParameters(Parameters oldParameters)
         {
-            //oldParameters.Set("contrast", "0");
             SetMinPreviewSize(oldParameters);
             SetMaxPictureSize(oldParameters);
             SetFlashModeOff(oldParameters);
@@ -19,7 +19,7 @@ namespace ServicesDemo3
             SetWhiteBalanceAuto(oldParameters);
             SetPictureFormatJpeg(oldParameters);
             oldParameters.JpegQuality = 100;
-            oldParameters.SetRotation(90);
+            SetRotation(oldParameters);
         }
 
         private Size FindMaxSize(IList<Size> sizes)
@@ -103,6 +103,19 @@ namespace ServicesDemo3
                 supportedPictureFormats.Contains(jpeg))
             {
                 oldParameters.PictureFormat = ImageFormat.Jpeg;
+            }
+        }
+
+        private void SetRotation(Parameters oldParameters)
+        {
+            switch(_currentCameraFacing)
+            {
+                case CameraFacing.Back:
+                    oldParameters.SetRotation(90);
+                    break;
+                case CameraFacing.Front:
+                    oldParameters.SetRotation(270);
+                    break;
             }
         }
     }

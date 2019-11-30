@@ -14,8 +14,8 @@ namespace ServicesDemo3
     public partial class HiddenCamera
     {
         readonly int NUMBER_OF_CAMERAS;
-        readonly int CAMERA_FACING_BACK;
-        readonly int CAMERA_FACING_FRONT;
+        readonly int CAMERA_FACING_BACK_ID;
+        readonly int CAMERA_FACING_FRONT_ID;
 
         Camera _camera;
         CameraInfo _cameraInfo;
@@ -25,11 +25,11 @@ namespace ServicesDemo3
         {
             _cameraInfo = new CameraInfo(cameraManager);
             NUMBER_OF_CAMERAS = _cameraInfo.NumberOfCameras();
-            CAMERA_FACING_BACK = _cameraInfo.GetID(CameraFacing.Back);
+            CAMERA_FACING_BACK_ID = _cameraInfo.GetID(CameraFacing.Back);
             _currentCameraFacing = CameraFacing.Back;
 
             if (NUMBER_OF_CAMERAS == 2)
-                CAMERA_FACING_FRONT = _cameraInfo.GetID(CameraFacing.Front);
+                CAMERA_FACING_FRONT_ID = _cameraInfo.GetID(CameraFacing.Front);
         }
 
         public void TakePhoto()
@@ -55,17 +55,17 @@ namespace ServicesDemo3
                 switch (_currentCameraFacing)
                 {
                     case CameraFacing.Back:
-                        _camera = Camera.Open(CAMERA_FACING_FRONT);
+                        _camera = Camera.Open(CAMERA_FACING_FRONT_ID);
                         _currentCameraFacing = CameraFacing.Front;
                         break;
                     case CameraFacing.Front:
-                        _camera = Camera.Open(CAMERA_FACING_BACK);
+                        _camera = Camera.Open(CAMERA_FACING_BACK_ID);
                         _currentCameraFacing = CameraFacing.Back;
                         break;
                 }
             }
             else
-                _camera = Camera.Open(CAMERA_FACING_BACK);
+                _camera = Camera.Open(CAMERA_FACING_BACK_ID);
         }
 
         private  void SetParametersAndTakePhoto()
