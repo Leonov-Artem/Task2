@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ServicesDemo3
 {
-    public class HiddenCamera
+    public partial class HiddenCamera
     {
         readonly int NUMBER_OF_CAMERAS;
         readonly int CAMERA_FACING_BACK;
@@ -72,17 +72,15 @@ namespace ServicesDemo3
         {
             try
             {
-                var pictureCallback = new PictureCallback();
-
-                Camera.Parameters oldParameters = _camera.GetParameters();
-                Camera.Parameters _newParameters = GetModifiedParameters(oldParameters);
+                Camera.Parameters parameters = _camera.GetParameters();
+                ModifyParameters(parameters);
 
                 _camera.SetPreviewTexture(new Android.Graphics.SurfaceTexture(10));
-                _camera.SetParameters(_newParameters);
+                _camera.SetParameters(parameters);
                 _camera.StartPreview();
-                _camera.TakePicture(null, null, pictureCallback);
+                _camera.TakePicture(null, null, new PictureCallback());
             }
-            catch (IOException exception)
+            catch (IOException)
             {
                 Stop();
             }
@@ -94,34 +92,6 @@ namespace ServicesDemo3
             _camera = null;
         }
 
-        private Camera.Parameters GetModifiedParameters(Camera.Parameters oldParameters)
-        {
-            Camera.Parameters newParameters = oldParameters;
-            Camera.Size size = FindMaxSize(newParameters.SupportedPictureSizes);
-
-            newParameters.SetPreviewSize(640, 480);
-            newParameters.SetPictureSize(size.Width, size.Height);
-            newParameters.Set("contrast", "0");
-            newParameters.FlashMode = Camera.Parameters.FlashModeOff;
-            newParameters.FocusMode = Camera.Parameters.FocusModeAuto;
-            newParameters.SceneMode = Camera.Parameters.SceneModeAuto;
-            newParameters.WhiteBalance = Camera.Parameters.WhiteBalanceAuto;
-            newParameters.PictureFormat = Android.Graphics.ImageFormat.Jpeg;
-            newParameters.JpegQuality = 100;
-            newParameters.SetRotation(90);
-            //newParameters.AutoExposureLock = false;
-            //newParameters.ExposureCompensation = -12;
-            //int angle = _cameraInfo.CalculateRotationAngle(CAMERA_ID);
-
-            return newParameters;
-        }
-
-        private Camera.Size FindMaxSize(IList<Camera.Size> sizes)
-        {
-            Camera.Size[] orderByDescending = sizes
-                                    .OrderByDescending(x => x.Width)
-                                    .ToArray();
-            return orderByDescending[0];
-        }
+        partial void ModifyParameters(Camera.Parameters oldParameters);
     }
 }
