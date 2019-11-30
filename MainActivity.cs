@@ -18,10 +18,10 @@ namespace ServicesDemo3
         static readonly Type SERVICE_TYPE = typeof(ForegroundService);
         readonly string TAG = SERVICE_TYPE.FullName;
 
-		Button _stopServiceButton;
-		Button _startServiceButton;
+        Button _startServiceButton;
+        Button _stopServiceButton;
 		static Intent _startServiceIntent;
-		Intent _stopServiceIntent;
+        Intent _stopServiceIntent;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -42,26 +42,17 @@ namespace ServicesDemo3
             _startServiceButton = FindViewById<Button>(Resource.Id.start_service_button);
             _stopServiceButton = FindViewById<Button>(Resource.Id.stop_service_button);
 
-            _startServiceButton.Click += StartServiceButton_Click;
-            _stopServiceButton.Click += StopServiceButton_Click;
+            _startServiceButton.Click += (obj, args) 
+                => StartForegroundServiceCompat<ForegroundService>(this);
+
+            _stopServiceButton.Click += (obj, args)
+                => StopService(_stopServiceIntent);
         }
 
 		protected override void OnDestroy()
 		{
 			base.OnDestroy();
 		}
-
-		void StartServiceButton_Click(object sender, System.EventArgs e)
-		{
-            StartForegroundServiceCompat<ForegroundService>(this);
-            Log.Info(TAG, "User requested that the service be started.");
-		}
-
-        void StopServiceButton_Click(object sender, System.EventArgs e)
-        {
-            StopService(_stopServiceIntent);
-            Log.Info(TAG, "User requested that the service be stopped.");
-        }
 
         private Intent GetIntent(Type type, string action)
         {

