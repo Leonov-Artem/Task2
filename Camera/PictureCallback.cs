@@ -10,6 +10,13 @@ namespace ServicesDemo3
 {
     class PictureCallback : Java.Lang.Object, Camera.IPictureCallback
     {
+        private int _cameraID;
+
+        public PictureCallback(int cameraID)
+        {
+            _cameraID = cameraID;
+        }
+
         public void OnPictureTaken(byte[] data, Camera camera)
         {
             File photoFile = GetOutputMediaFile();
@@ -29,7 +36,7 @@ namespace ServicesDemo3
         private File GetOutputMediaFile()
         {
             string timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").Format(new Date());
-            string imageFileName = "JPEG_" + timeStamp + "_";
+            string imageFileName = $"cameraID: {_cameraID}. JPEG_" + timeStamp + "_";
             File storageDir = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryPictures);
             File image = File.CreateTempFile(
                 imageFileName,  /* prefix */
