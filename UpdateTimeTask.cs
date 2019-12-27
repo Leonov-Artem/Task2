@@ -14,8 +14,8 @@ namespace Task2
 
         public void Stop()
         {
-            _hiddenCamera.Stop();
             this.Cancel();
+            _hiddenCamera.Stop();
         }
     }
 }
