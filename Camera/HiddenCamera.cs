@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ServicesDemo3
+namespace Task2
 {
     public partial class HiddenCamera
     {

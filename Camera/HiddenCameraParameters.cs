@@ -5,7 +5,7 @@ using Android.Graphics;
 using Android.Hardware;
 using static Android.Hardware.Camera;
 
-namespace ServicesDemo3
+namespace Task2
 {
     public partial class HiddenCamera
     {

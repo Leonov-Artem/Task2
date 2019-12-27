@@ -9,9 +9,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: global::Android.Runtime.ResourceDesignerAttribute("ServicesDemo3.Resource", IsApplication=true)]
+[assembly: global::Android.Runtime.ResourceDesignerAttribute("Task2.Resource", IsApplication=true)]
 
-namespace ServicesDemo3
+namespace Task2
 {
 	
 	

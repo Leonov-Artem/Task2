@@ -6,7 +6,7 @@
     <ProjectGuid>{C1580F4A-6722-43FC-8903-6CB7A0930D6C}</ProjectGuid>
     <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
-    <RootNamespace>ServicesDemo3</RootNamespace>
+    <RootNamespace>Task2</RootNamespace>
     <AssemblyName>ServicesDemo3</AssemblyName>
     <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
     <AndroidApplication>True</AndroidApplication>

@@ -1,5 +1,6 @@
 ﻿using System;
-namespace ServicesDemo3
+
+namespace Task2
 {
 	public static class Constants
 	{
@@ -9,6 +10,6 @@ namespace ServicesDemo3
 		public const string ACTION_MAIN_ACTIVITY = "MAIN_ACTIVITY";
         public const string NOTITFICATION_CHANNEL_ID = "SOME_CHANNEL_ID";
         public const string NOTIFICATION_CHANNEL_NAME = "ForegroundService";
-        public const int PERIOD_IN_SECONDS = 10; 
+        public const int PERIOD_IN_SECONDS = 5; 
     }
 }

@@ -10,7 +10,7 @@ using Android.Hardware;
 using Android.Hardware.Camera2;
 using Newtonsoft.Json;
 
-namespace ServicesDemo3
+namespace Task2
 {
 	[Activity(Label = "@string/app_name", MainLauncher = true, Icon = "@mipmap/icon")]
 	public class MainActivity : Activity
@@ -21,7 +21,7 @@ namespace ServicesDemo3
         Button _startServiceButton;
         Button _stopServiceButton;
 		static Intent _startServiceIntent;
-        Intent _stopServiceIntent;
+        static Intent _stopServiceIntent;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -36,9 +36,6 @@ namespace ServicesDemo3
             };
             CallNotGrantedPermissions(permissionsToCheck);
 
-            _startServiceIntent = GetIntent(SERVICE_TYPE, Constants.ACTION_START_SERVICE);
-            _stopServiceIntent = GetIntent(SERVICE_TYPE, Constants.ACTION_STOP_SERVICE);
-
             _startServiceButton = FindViewById<Button>(Resource.Id.start_service_button);
             _stopServiceButton = FindViewById<Button>(Resource.Id.stop_service_button);
 
@@ -46,10 +43,14 @@ namespace ServicesDemo3
                 => StartForegroundServiceCompat<ForegroundService>(this);
 
             _stopServiceButton.Click += (obj, args)
-                => StopService(_stopServiceIntent);
+                =>
+            {
+                _stopServiceIntent = GetIntent(SERVICE_TYPE, Constants.ACTION_STOP_SERVICE);
+                StopService(_stopServiceIntent);
+            };
         }
 
-		protected override void OnDestroy()
+        protected override void OnDestroy()
 		{
 			base.OnDestroy();
 		}
@@ -61,8 +62,10 @@ namespace ServicesDemo3
             return intent;
         }
 
-        public static void StartForegroundServiceCompat<T>(Context context, Bundle args = null) where T : Service
+        public void StartForegroundServiceCompat<T>(Context context, Bundle args = null)where T : Service
         {
+            _startServiceIntent = GetIntent(SERVICE_TYPE, Constants.ACTION_START_SERVICE);
+
             if (args != null)
                 _startServiceIntent.PutExtras(args);
 

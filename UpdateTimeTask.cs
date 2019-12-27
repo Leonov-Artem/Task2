@@ -1,6 +1,6 @@
 ﻿using Java.Util;
 
-namespace ServicesDemo3
+namespace Task2
 {
     class UpdateTimeTask : TimerTask
     {
@@ -11,5 +11,11 @@ namespace ServicesDemo3
 
         public override void Run()
             => _hiddenCamera.TakePhoto();
+
+        public void Stop()
+        {
+            _hiddenCamera.Stop();
+            this.Cancel();
+        }
     }
 }

@@ -12,7 +12,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
-namespace ServicesDemo3
+namespace Task2
 {
     public class CameraInfo
     {

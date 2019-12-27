@@ -6,7 +6,7 @@ using Android.Net;
 using System;
 using Android.Util;
 
-namespace ServicesDemo3
+namespace Task2
 {
     class PictureCallback : Java.Lang.Object, Camera.IPictureCallback
     {

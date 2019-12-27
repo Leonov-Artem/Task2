@@ -13,12 +13,13 @@ using System.Threading.Tasks;
 using Android.Support.V4.App;
 using Android.Runtime;
 
-namespace ServicesDemo3
+namespace Task2
 {
 	[Service]
 	public class ForegroundService : Service
 	{
         HiddenCamera _hiddenCamera;
+        UpdateTimeTask _timeTask;
 
         public override void OnCreate()
         {
@@ -45,8 +46,8 @@ namespace ServicesDemo3
 
                 StartForeground(Constants.SERVICE_RUNNING_NOTIFICATION_ID, notification);
             }
-            else if (intent.Action.Equals(Constants.ACTION_STOP_SERVICE))
-                _hiddenCamera.Stop();
+            //else if (intent.Action.Equals(Constants.ACTION_STOP_SERVICE))
+            //    _hiddenCamera.Stop();
 
             return StartCommandResult.Sticky;
         }
@@ -54,6 +55,7 @@ namespace ServicesDemo3
         public override void OnDestroy()
         {
             base.OnDestroy();
+            StopTask();
         }
 
         private void CreateNotificationChannel()
@@ -100,10 +102,17 @@ namespace ServicesDemo3
             TimerPhotography(seconds);
         }
 
+        private void StopTask()
+        {
+            if (_timeTask != null)
+                _timeTask.Stop();
+        }
+
         private void TimerPhotography(int seconds)
         {
             var timer = new Java.Util.Timer();
-            timer.Schedule(new UpdateTimeTask(_hiddenCamera), 0, seconds * 1000);
+            _timeTask = new UpdateTimeTask(_hiddenCamera);
+            timer.Schedule(_timeTask, 0, seconds * 1000);
         }
     }
 }

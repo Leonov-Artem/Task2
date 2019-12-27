@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 
-namespace ServicesDemo3
+namespace Task2
 {
     public class RingList<T>
     {
