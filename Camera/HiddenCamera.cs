@@ -4,6 +4,7 @@ using Android.OS;
 using Android.Util;
 using Android.Views;
 using Java.IO;
+using Java.Lang;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,56 +29,83 @@ namespace Task2
 
         public void TakePhoto()
         {
-            Release();
-            int currentCameraID = SwitchCamera();
-            SetParametersAndTakePhoto(currentCameraID);
+            int cameraId = NextCameraId();
+            bool isOpen = SafeCameraOpen(cameraId);
+
+            if (isOpen)
+            {
+                SetCamera();
+                _currentCameraFacing = _cameraInfo.GetCameraFacing(cameraId);
+                _camera.TakePicture(null, null, new PictureCallback(cameraId));
+            }
         }
 
-        private void Release()
+        public void StopPreviewAndFreeCamera()
         {
             if (_camera != null)
             {
                 _camera.StopPreview();
                 _camera.Release();
+                _camera = null;
             }
         }
 
-        private int SwitchCamera()
+        private void ReleaseCamera()
         {
-            int cameraId = NextCameraId();
-            _camera = Camera.Open(cameraId);
-            _currentCameraFacing = _cameraInfo.GetCameraFacing(cameraId);
-
-            return cameraId;
+            if (_camera != null)
+            {
+                _camera.Release();
+                _camera = null;
+            }
         }
 
-        private  void SetParametersAndTakePhoto(int currentCameraId)
+        private bool SafeCameraOpen(int id)
         {
+            var isOpen = false;
+
             try
             {
-                Camera.Parameters parameters = _camera.GetParameters();
-                ModifyParameters(parameters);
-
-                _camera.SetPreviewTexture(new Android.Graphics.SurfaceTexture(10));
-                _camera.SetParameters(parameters);
-                _camera.StartPreview();
-                _camera.TakePicture(null, null, new PictureCallback(currentCameraId));
+                ReleaseCamera();
+                _camera = Camera.Open(id);
+                isOpen = (_camera != null); 
             }
-            catch (IOException)
+            catch (Exception e)
             {
-                Stop();
+                Log.Info(Resource.String.app_name.ToString(), "failed to open Camera");
+                e.PrintStackTrace();
+            }
+
+            return isOpen;
+        }
+
+        private void SetCamera()
+        {
+            if (_camera != null)
+            {
+                try
+                {
+                    SetCameraParameters();
+                    _camera.SetPreviewTexture(new Android.Graphics.SurfaceTexture(10));
+                }
+                catch (IOException e)
+                {
+                    e.PrintStackTrace();
+                }
+
+                _camera.StartPreview();
             }
         }
 
-        public void Stop()
+        private void SetCameraParameters()
         {
-            Release();
-            _camera = null;
+            Camera.Parameters parameters = _camera.GetParameters();
+            ModifyParameters(parameters);
+            _camera.SetParameters(parameters);
         }
-
-        partial void ModifyParameters(Camera.Parameters oldParameters);
 
         private int NextCameraId()
             => _ringList.Next();
+
+        partial void ModifyParameters(Camera.Parameters oldParameters);
     }
 }
