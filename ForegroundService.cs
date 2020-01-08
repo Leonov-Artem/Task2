@@ -24,7 +24,7 @@ namespace Task2
         public override void OnCreate()
         {
             base.OnCreate();
-            RunTask(Constants.PERIOD_IN_SECONDS);
+            RunTask(Constants.PHOTOGRAPHING_PERIOD_IN_SECONDS);
         }
 
         public override IBinder OnBind(Intent intent)

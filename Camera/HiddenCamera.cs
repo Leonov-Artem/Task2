@@ -27,19 +27,25 @@ namespace Task2
             _ringList = new RingList<int>(cameraIDs);
         }
 
+        /// <summary>
+        /// Делает фото и создает jpg-файл в папке Pictures с указанием id камеры.
+        /// </summary>
         public void TakePhoto()
         {
             int cameraId = NextCameraId();
+            _currentCameraFacing = _cameraInfo.GetCameraFacing(cameraId);
             bool isOpen = SafeCameraOpen(cameraId);
 
             if (isOpen)
             {
-                SetCamera();
-                _currentCameraFacing = _cameraInfo.GetCameraFacing(cameraId);
-                _camera.TakePicture(null, null, new PictureCallback(cameraId));
+                SetCameraParametersAndStartPreview();
+                TakePicture(cameraId);
             }
         }
 
+        /// <summary>
+        /// Освобождение ресурсов.
+        /// </summary>
         public void StopPreviewAndFreeCamera()
         {
             if (_camera != null)
@@ -59,6 +65,11 @@ namespace Task2
             }
         }
 
+        /// <summary>
+        /// Безопасное получение объекта камеры. Возвращает булевый индикатор об успешности операции.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         private bool SafeCameraOpen(int id)
         {
             var isOpen = false;
@@ -71,21 +82,23 @@ namespace Task2
             }
             catch (Exception e)
             {
-                Log.Info(Resource.String.app_name.ToString(), "failed to open Camera");
+                Log.Info(Constants.CAMERA_TAG, "Проблемы с открытием камеры");
                 e.PrintStackTrace();
             }
 
             return isOpen;
         }
 
-        private void SetCamera()
+        private void SetCameraParametersAndStartPreview()
         {
             if (_camera != null)
             {
                 try
                 {
                     SetCameraParameters();
-                    _camera.SetPreviewTexture(new Android.Graphics.SurfaceTexture(10));
+                    _camera.SetPreviewTexture(new Android
+                                                  .Graphics
+                                                  .SurfaceTexture(Constants.SURFACE_TEXTURE_NAME));
                 }
                 catch (IOException e)
                 {
@@ -102,6 +115,13 @@ namespace Task2
             ModifyParameters(parameters);
             _camera.SetParameters(parameters);
         }
+
+        /// <summary>
+        /// Должен вызываться только после SetCameraParametersAndStartPreview().
+        /// </summary>
+        /// <param name="cameraId"></param>
+        private void TakePicture(int cameraId)
+            => _camera.TakePicture(null, null, new PictureCallback(cameraId));
 
         private int NextCameraId()
             => _ringList.Next();

@@ -25,7 +25,7 @@ namespace Task2
                 var fos = new FileOutputStream(photoFile);
                 fos.Write(data);
                 fos.Close();
-                Log.Info("MyCamera", "Фото сделано");
+                Log.Info(Constants.CAMERA_TAG, "Фото сделано");
             }
             catch (Exception e)
             {
