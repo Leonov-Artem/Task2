@@ -2,7 +2,6 @@
 using Java.IO;
 using Android.Icu.Text;
 using Java.Util;
-using Android.Net;
 using System;
 using Android.Util;
 

@@ -1,15 +1,8 @@
 ﻿using Android.Hardware;
 using Android.Hardware.Camera2;
-using Android.OS;
 using Android.Util;
-using Android.Views;
 using Java.IO;
 using Java.Lang;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Task2
 {

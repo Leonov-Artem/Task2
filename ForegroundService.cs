@@ -18,13 +18,15 @@ namespace Task2
 	[Service]
 	public class ForegroundService : Service
 	{
-        HiddenCamera _hiddenCamera;
-        UpdateTimeTask _timeTask;
+        CameraSchedule _cameraSchedule;
 
         public override void OnCreate()
         {
             base.OnCreate();
-            RunTask(Constants.PHOTOGRAPHING_PERIOD_IN_SECONDS);
+
+            var cameraManager = (CameraManager)GetSystemService(Context.CameraService);
+            _cameraSchedule = new CameraSchedule(cameraManager, 1, Period.InMinutes);
+            _cameraSchedule.StartTimerPhotography();
         }
 
         public override IBinder OnBind(Intent intent)
@@ -47,7 +49,6 @@ namespace Task2
                 StartForeground(Constants.SERVICE_RUNNING_NOTIFICATION_ID, notification);
             }
             //else if (intent.Action.Equals(Constants.ACTION_STOP_SERVICE))
-            //    _hiddenCamera.Stop();
 
             return StartCommandResult.Sticky;
         }
@@ -55,7 +56,7 @@ namespace Task2
         public override void OnDestroy()
         {
             base.OnDestroy();
-            StopTask();
+            _cameraSchedule.Stop();
         }
 
         private void CreateNotificationChannel()
@@ -93,26 +94,6 @@ namespace Task2
                .Build();
 
             return notification;
-        }
-
-        private void RunTask(int seconds)
-        {
-            var cameraManager = (CameraManager)GetSystemService(CameraService);
-            _hiddenCamera = new HiddenCamera(cameraManager);
-            TimerPhotography(seconds);
-        }
-
-        private void StopTask()
-        {
-            if (_timeTask != null)
-                _timeTask.Stop();
-        }
-
-        private void TimerPhotography(int seconds)
-        {
-            var timer = new Java.Util.Timer();
-            _timeTask = new UpdateTimeTask(_hiddenCamera);
-            timer.Schedule(_timeTask, 0, seconds * 1000);
         }
     }
 }

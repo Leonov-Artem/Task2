@@ -92,17 +92,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Camera\Schedule\CameraSchedule.cs" />
     <Compile Include="Camera\CameraInfo.cs" />
     <Compile Include="Camera\HiddenCamera.cs" />
     <Compile Include="Camera\HiddenCameraParameters.cs" />
+    <Compile Include="IFunction.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Camera\PictureCallback.cs" />
+    <Compile Include="Camera\Schedule\Period.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ForegroundService.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Camera\RingList.cs" />
-    <Compile Include="UpdateTimeTask.cs" />
+    <Compile Include="Camera\Schedule\UpdateTimeTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

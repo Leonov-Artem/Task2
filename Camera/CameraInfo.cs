@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.Hardware;
+﻿using Android.Hardware;
 using Android.Hardware.Camera2;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 
 namespace Task2
 {
@@ -49,11 +38,11 @@ namespace Task2
         /// <returns></returns>
         public int[] GetCameraIdArray()
         {
-            string[] IDs = _cameraManager.GetCameraIdList();
-            var array = new int[IDs.Length];
+            string[] idList = _cameraManager.GetCameraIdList();
+            var array = new int[idList.Length];
 
-            for (int i = 0; i < IDs.Length; i++)
-                array[i] = int.Parse(IDs[i]);
+            for (int i = 0; i < idList.Length; i++)
+                array[i] = int.Parse(idList[i]);
 
             return array;
         }

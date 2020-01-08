@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Task2
 {
@@ -18,10 +17,6 @@ namespace Task2
             _current = _list.First;
         }
 
-        /// <summary>
-        /// Возвращает следующий элемент
-        /// </summary>
-        /// <returns></returns>
         public T Next
         {
             get
