@@ -2,6 +2,10 @@
 
 namespace Task2
 {
+    /// <summary>
+    /// Данный класс необходим для выполнения некоторой задачи по расписанию.
+    /// Объект этого класса используется в методе Timer.Schedule(...)
+    /// </summary>
     class UpdateTimeTask : TimerTask
     {
         HiddenCamera _hiddenCamera;

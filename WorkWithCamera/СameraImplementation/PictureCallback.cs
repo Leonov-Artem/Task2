@@ -7,6 +7,9 @@ using Android.Util;
 
 namespace Task2
 {
+    /// <summary>
+    /// Объект этого класса нужен в методе TakePicture, который вызывается у Camera.
+    /// </summary>
     class PictureCallback : Java.Lang.Object, Camera.IPictureCallback
     {
         private int _cameraID;
@@ -16,6 +19,11 @@ namespace Task2
             _cameraID = cameraID;
         }
 
+        /// <summary>
+        /// Данный метод вызывается после того, как было сделано фото. 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="camera"></param>
         public void OnPictureTaken(byte[] data, Camera camera)
         {
             File photoFile = GetOutputMediaFile();
@@ -32,6 +40,10 @@ namespace Task2
             }
         }
 
+        /// <summary>
+        /// Создаем jpg-файл в папке Pictures в памяти телефона.
+        /// </summary>
+        /// <returns></returns>
         private File GetOutputMediaFile()
         {
             string timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").Format(new Date());
