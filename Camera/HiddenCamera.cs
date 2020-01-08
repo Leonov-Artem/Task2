@@ -33,14 +33,16 @@ namespace Task2
         public void TakePhoto()
         {
             int cameraId = NextCameraId();
-            _currentCameraFacing = _cameraInfo.GetCameraFacing(cameraId);
             bool isOpen = SafeCameraOpen(cameraId);
 
             if (isOpen)
             {
+                _currentCameraFacing = _cameraInfo.GetCameraFacing(cameraId);
                 SetCameraParametersAndStartPreview();
                 TakePicture(cameraId);
             }
+            else
+                BackToPreviousId();
         }
 
         /// <summary>
@@ -124,7 +126,10 @@ namespace Task2
             => _camera.TakePicture(null, null, new PictureCallback(cameraId));
 
         private int NextCameraId()
-            => _ringList.Next();
+            => _ringList.Next;
+
+        private int BackToPreviousId()
+            => _ringList.Previous;
 
         partial void ModifyParameters(Camera.Parameters oldParameters);
     }

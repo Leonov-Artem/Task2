@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace Task2
 {
@@ -9,26 +9,45 @@ namespace Task2
     /// <typeparam name="T"></typeparam>
     public class RingList<T>
     {
-        IEnumerator enumerator;
+        LinkedList<T> _list;
+        LinkedListNode<T> _current;
 
         public RingList(T[] array)
         {
-            enumerator = array.GetEnumerator();
+            _list = new LinkedList<T>(array);
+            _current = _list.First;
         }
 
         /// <summary>
         /// Возвращает следующий элемент
         /// </summary>
         /// <returns></returns>
-        public T Next()
+        public T Next
         {
-            if (!enumerator.MoveNext())
+            get
             {
-                enumerator.Reset();
-                enumerator.MoveNext();
-            }
+                var value = _current.Value;
 
-            return (T)enumerator.Current;
+                if (_current.Next != null)
+                    _current = _current.Next;
+                else
+                    _current = _list.First;
+
+                return value;
+            }
+        }
+
+        public T Previous
+        {
+            get
+            {
+                if (_current.Previous != null)
+                    _current = _current.Previous;
+                else
+                    _current = _list.Last;
+
+                return _current.Value;
+            }
         }
     }
 }
