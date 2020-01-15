@@ -18,7 +18,7 @@ namespace Task2
             SetSceneModeAuto(oldParameters);
             SetWhiteBalanceAuto(oldParameters);
             SetPictureFormatJpeg(oldParameters);
-            oldParameters.JpegQuality = Constants.JPEG_MAX_QUALITY;
+            oldParameters.JpegQuality = JPEG_MAX_QUALITY;
             SetRotation(oldParameters);
         }
 

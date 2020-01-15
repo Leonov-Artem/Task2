@@ -8,16 +8,28 @@ namespace Task2
 {
     public partial class HiddenCamera
     {
+        const int SURFACE_TEXTURE_NAME = 10;
+        const int JPEG_MAX_QUALITY = 100;
+
         Camera _camera;
         CameraInfo _cameraInfo;
         RingList<int> _ringList;
         CameraFacing _currentCameraFacing;
+        Camera.IShutterCallback _shutterCallback;
+        Camera.IPictureCallback _rawPictureCallback;
+
+        private bool CameraIsOpen
+        {
+            get => _camera != null;
+        }
 
         public HiddenCamera(CameraManager cameraManager)
         {
             _cameraInfo = new CameraInfo(cameraManager);
             int[] cameraIDs = _cameraInfo.GetCameraIdArray();
             _ringList = new RingList<int>(cameraIDs);
+            _shutterCallback = null;
+            _rawPictureCallback = null;
         }
 
         /// <summary>
@@ -26,16 +38,16 @@ namespace Task2
         public void TakePhoto()
         {
             int cameraId = NextCameraId();
-            bool isOpen = SafeCameraOpen(cameraId);
+            SafeCameraOpen(cameraId);
 
-            if (isOpen)
+            if (CameraIsOpen)
             {
                 _currentCameraFacing = _cameraInfo.GetCameraFacing(cameraId);
                 SetCameraParametersAndStartPreview();
                 TakePicture(cameraId);
             }
             else
-                BackToPreviousId();
+                BackToPreviousCameraId();
         }
 
         /// <summary>
@@ -43,7 +55,7 @@ namespace Task2
         /// </summary>
         public void StopPreviewAndFreeCamera()
         {
-            if (_camera != null)
+            if (CameraIsOpen)
             {
                 _camera.StopPreview();
                 _camera.Release();
@@ -53,7 +65,7 @@ namespace Task2
 
         private void ReleaseCamera()
         {
-            if (_camera != null)
+            if (CameraIsOpen)
             {
                 _camera.Release();
                 _camera = null;
@@ -65,43 +77,35 @@ namespace Task2
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        private bool SafeCameraOpen(int id)
+        private void SafeCameraOpen(int id)
         {
-            var isOpen = false;
-
             try
             {
                 ReleaseCamera();
                 _camera = Camera.Open(id);
-                isOpen = (_camera != null); 
             }
             catch (Exception e)
             {
                 Log.Info(Constants.CAMERA_TAG, "Проблемы с открытием камеры");
                 e.PrintStackTrace();
             }
-
-            return isOpen;
         }
 
         private void SetCameraParametersAndStartPreview()
         {
-            if (_camera != null)
+            try
             {
-                try
-                {
-                    SetCameraParameters();
-                    _camera.SetPreviewTexture(new Android
-                                                  .Graphics
-                                                  .SurfaceTexture(Constants.SURFACE_TEXTURE_NAME));
-                }
-                catch (IOException e)
-                {
-                    e.PrintStackTrace();
-                }
-
-                _camera.StartPreview();
+                SetCameraParameters();
+                _camera.SetPreviewTexture(new Android
+                                              .Graphics
+                                              .SurfaceTexture(SURFACE_TEXTURE_NAME));
             }
+            catch (IOException e)
+            {
+                e.PrintStackTrace();
+            }
+
+            _camera.StartPreview();
         }
 
         private void SetCameraParameters()
@@ -112,16 +116,20 @@ namespace Task2
         }
 
         /// <summary>
-        /// Должен вызываться только после SetCameraParametersAndStartPreview().
+        /// Должен вызываться только после SetCameraParametersAndStartPreview(),
+        /// если камера открыта.
         /// </summary>
         /// <param name="cameraId"></param>
         private void TakePicture(int cameraId)
-            => _camera.TakePicture(null, null, new PictureCallback(cameraId));
+            => _camera.TakePicture(
+                    _shutterCallback, 
+                    _rawPictureCallback, 
+                    new PictureCallback(cameraId));
 
         private int NextCameraId()
             => _ringList.Next;
 
-        private int BackToPreviousId()
+        private int BackToPreviousCameraId()
             => _ringList.Previous;
 
         partial void ModifyParameters(Camera.Parameters oldParameters);

@@ -9,8 +9,5 @@
         public const string NOTIFICATION_CHANNEL_NAME = "FOREGROUND_SERVICE";
 		public const string CAMERA_TAG = "MY_CAMERA";
 		public const int SERVICE_RUNNING_NOTIFICATION_ID = 10000;
-		public const int EVERY_MINUTE = 60000;
-		public const int JPEG_MAX_QUALITY = 100;
-		public const int SURFACE_TEXTURE_NAME = 10;
 	}
 }
